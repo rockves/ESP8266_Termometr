@@ -2,19 +2,21 @@
 #include <WiFiClientSecure.h>
 #include <OneWire.h>
 #include <DallasTemperature.h>
+#include <U8x8lib.h>
 #define DEBUG true
-#define SSID "SSID"
-#define PASSWORD "PASSWORD"
+#define SSID "Dom_03_2.4G"
+#define PASSWORD "gn9j-0dln-2cp1"
 #define HOST "script.google.com"
 #define HTTP_PORT 443
-#define TEMP_SENSOR_GPIO 4
+#define TEMP_SENSOR_GPIO 0
 #define TIME_BETWEEN_MEASUREMENT_MILISECONDS 500
 #define DEEP_SLEEP_TIME_MILISECONDS 5000
 
-String url = "MACRO_URL";
+String url = "/macros/s/AKfycbz1tq8IRyaVZyfy-0BTZiumuc_s7IyiYQSKqXFcAe1IokDR__Me/exec?func=addData&";
 WiFiClientSecure client;
 OneWire oneWire(TEMP_SENSOR_GPIO);
 DallasTemperature sensor(&oneWire);
+U8X8_SSD1306_128X64_NONAME_SW_I2C oled(/* clock=*/ 5, /* data=*/ 4, /* reset=*/ U8X8_PIN_NONE);
 float probeTemperatures[3];
 
 void connectToWiFi(const char* _ssid, const char* _password){
@@ -56,7 +58,13 @@ float getTemperature(){
         Serial.print("Temperatura 1: ");
         Serial.println(probeTemperatures[2]);
     }
-    return ((probeTemperatures[0]+probeTemperatures[1]+probeTemperatures[2])/3);
+    float avgTemp = (probeTemperatures[0]+probeTemperatures[1]+probeTemperatures[2])/3;
+    const char* degree = " °C";
+    oled.clear();
+    oled.clearDisplay();
+    oled.print(avgTemp);
+    oled.print(degree);
+    return (avgTemp);
 } //~1s
 
 void sendData(float temperature){
@@ -82,6 +90,8 @@ void setup(){
     connectToWiFi(SSID,PASSWORD);
     client.setInsecure();
     sensor.begin();
+    oled.begin();
+    oled.setFont(u8x8_font_pcsenior_f);
 }
 
 void loop(){ 
