@@ -4,8 +4,8 @@
 #include <DallasTemperature.h>
 #include <U8x8lib.h>
 #define DEBUG true
-#define SSID "Dom_03_2.4G"
-#define PASSWORD "gn9j-0dln-2cp1"
+#define SSID "SSID"
+#define PASSWORD "PASSWORD"
 #define HOST "script.google.com"
 #define HTTP_PORT 443
 #define TEMP_SENSOR_GPIO 0                                          //GPIO dla sensora DS18B20
@@ -14,7 +14,7 @@
 #define TIME_BETWEEN_SENDING_DATA_MILISECONDS 10000                 //Czas po którym nastąpi wysłanie temperatury
 #define TIME_BETWEEN_DISPLAYING_DATA 2000                           //Czas pomiędzy wyświetleniem temperatury
 
-String url = "/macros/s/AKfycbz1tq8IRyaVZyfy-0BTZiumuc_s7IyiYQSKqXFcAe1IokDR__Me/exec?func=addData&"; //Link do makro w google script
+String url = "MACRO URL"; //Link do makro w google script
 WiFiClientSecure client;
 
 OneWire oneWire(TEMP_SENSOR_GPIO); //Interfejs OneWire
