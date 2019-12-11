@@ -3,8 +3,8 @@
 #include <OneWire.h>
 #include <DallasTemperature.h>
 #define DEBUG true
-#define SSID "SSID"
-#define PASSWORD "PASSWORD"
+#define SSID "Dom_03_2.4G"
+#define PASSWORD "gn9j-0dln-2cp1"
 #define HOST "script.google.com"
 #define HTTP_PORT 443
 #define TEMP_SENSOR_GPIO 4
@@ -12,7 +12,7 @@
 #define TIME_BETWEEN_MEASUREMENT_MILISECONDS 300
 #define DEEP_SLEEP_TIME_MILISECONDS 5000
 
-String url = "MACRO_URL";
+String url = "https://script.google.com/macros/s/AKfycbz1tq8IRyaVZyfy-0BTZiumuc_s7IyiYQSKqXFcAe1IokDR__Me/exec?func=addData";
 WiFiClientSecure client;
 
 OneWire oneWire(TEMP_SENSOR_GPIO);
@@ -103,7 +103,11 @@ void setup(){
     client.setInsecure();
     sensor.begin();
 
+    avgTemperature = getTemperature();
+    WiFi.forceSleepWake();
     connectToWiFi(SSID,PASSWORD);
+    sendData(avgTemperature);
+    ESP.deepSleep(8e6, WAKE_RF_DISABLED);
 }
 
 void loop(){
