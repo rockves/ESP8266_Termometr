@@ -96,20 +96,22 @@ void sendData(float temperature){
 void setup(){
     #if DEBUG
         Serial.begin(115200);
-       // Serial.setDebugOutput(true);
+        Serial.setDebugOutput(true);
     #endif
 
     pinMode(LED_BUILTIN, OUTPUT);
     digitalWrite(LED_BUILTIN, HIGH);
     client.setInsecure();
     sensor.begin();
+    avgTemperature = getTemperature();
+    //WiFi.forceSleepWake();
+    WiFi.persistent(false);
+    //WiFi.printDiag(Serial);
+    connectToWiFi(SSID,PASSWORD);
+    sendData(avgTemperature);
+    WiFi.disconnect(true);
+    ESP.deepSleepInstant(8e6, WAKE_RF_DEFAULT);
 }
 
 void loop(){
-        avgTemperature = getTemperature();
-        WiFi.forceSleepWake();
-        //WiFi.printDiag(Serial);
-        connectToWiFi(SSID,PASSWORD);
-        sendData(avgTemperature);
-        ESP.deepSleep(8e6, WAKE_RF_DEFAULT);
 }
