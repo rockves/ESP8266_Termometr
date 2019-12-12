@@ -48,7 +48,7 @@ void connectToWiFi(const char* _ssid, const char* _password){
 }
 
 float getTemperature(){
-    probeTemperatures[0] = probeTemperatures[1] = probeTemperatures[2] = 0;
+    probeTemperatures[0] = probeTemperatures[1] = 0;
     
     sensor.requestTemperatures();
     delay(TIME_BETWEEN_CHECK_AND_READ_TEMPERATURE_MILISECONDS);
@@ -96,19 +96,20 @@ void sendData(float temperature){
 void setup(){
     #if DEBUG
         Serial.begin(115200);
+       // Serial.setDebugOutput(true);
     #endif
 
     pinMode(LED_BUILTIN, OUTPUT);
-    WiFi.persistent(false);
+    digitalWrite(LED_BUILTIN, HIGH);
     client.setInsecure();
     sensor.begin();
-
-    avgTemperature = getTemperature();
-    WiFi.forceSleepWake();
-    connectToWiFi(SSID,PASSWORD);
-    sendData(avgTemperature);
-    ESP.deepSleep(8e6, WAKE_RF_DISABLED);
 }
 
 void loop(){
+        avgTemperature = getTemperature();
+        WiFi.forceSleepWake();
+        //WiFi.printDiag(Serial);
+        connectToWiFi(SSID,PASSWORD);
+        sendData(avgTemperature);
+        ESP.deepSleep(8e6, WAKE_RF_DEFAULT);
 }
