@@ -10,12 +10,14 @@
 #define TEMP_SENSOR_GPIO 4
 #define TIME_BETWEEN_CHECK_AND_READ_TEMPERATURE_MILISECONDS 800
 #define TIME_BETWEEN_MEASUREMENT_MILISECONDS 300
+#define MAX_MEASUREMENTS_ERROR  2
 #define DEEP_SLEEP_TIME_MILISECONDS 5000
 
 String url = "https://script.google.com/macros/s/AKfycbz1tq8IRyaVZyfy-0BTZiumuc_s7IyiYQSKqXFcAe1IokDR__Me/exec?func=addData";
 WiFiClientSecure client;
 
 OneWire oneWire(TEMP_SENSOR_GPIO);
+byte sensorAddrs[8];
 DallasTemperature sensor(&oneWire);
 
 float probeTemperatures[2];
@@ -47,18 +49,40 @@ void connectToWiFi(const char* _ssid, const char* _password){
     digitalWrite(LED_BUILTIN, HIGH);
 }
 
+bool checkIsSensorConnected(){
+    if ( !oneWire.search(sensorAddrs)) {
+        Serial.println("Sensor disconnected!");
+        return false;
+    }
+    return true;
+}
+
+bool checkIsMeasurementError(){
+    float checkValue = probeTemperatures[0] - probeTemperatures[1];
+    if(abs(checkValue) > MAX_MEASUREMENTS_ERROR){
+        #if DEBUG
+            Serial.println("Blad pomiaru");
+        #endif
+        return true;
+    }else{
+        return false;
+    }
+}
+
 float getTemperature(){
     probeTemperatures[0] = probeTemperatures[1] = 0;
     
-    sensor.requestTemperatures();
-    delay(TIME_BETWEEN_CHECK_AND_READ_TEMPERATURE_MILISECONDS);
-    probeTemperatures[0] = sensor.getTempCByIndex(0);
+    do{
+        sensor.requestTemperatures();
+        delay(TIME_BETWEEN_CHECK_AND_READ_TEMPERATURE_MILISECONDS);
+        probeTemperatures[0] = sensor.getTempCByIndex(0);
 
-    delay(TIME_BETWEEN_MEASUREMENT_MILISECONDS);
+        delay(TIME_BETWEEN_MEASUREMENT_MILISECONDS);
 
-    sensor.requestTemperatures();
-    delay(TIME_BETWEEN_CHECK_AND_READ_TEMPERATURE_MILISECONDS);
-    probeTemperatures[1] = sensor.getTempCByIndex(0);
+        sensor.requestTemperatures();
+        delay(TIME_BETWEEN_CHECK_AND_READ_TEMPERATURE_MILISECONDS);
+        probeTemperatures[1] = sensor.getTempCByIndex(0);
+    }while (checkIsMeasurementError());
 
     #if DEBUG
         Serial.print("Temperatura 1: ");
@@ -103,18 +127,17 @@ void setup(){
     digitalWrite(LED_BUILTIN, HIGH);
     client.setInsecure();
     sensor.begin();
-    avgTemperature = getTemperature();
-    WiFi.forceSleepWake();
-    delay(500);
-    WiFi.persistent(false);
-    //WiFi.printDiag(Serial);
-    connectToWiFi(SSID,PASSWORD);
-    sendData(avgTemperature);
-    WiFi.disconnect(true);
-    
+    if(checkIsSensorConnected()){
+        avgTemperature = getTemperature();
+        WiFi.forceSleepWake();
+        WiFi.persistent(false);
+        //WiFi.printDiag(Serial);
+        connectToWiFi(SSID,PASSWORD);
+        sendData(avgTemperature);
+        WiFi.disconnect(true);
+    }
     system_deep_sleep_set_option(2);
     system_deep_sleep_instant(8e6);
-    //ESP.deepSleepInstant(8e6, WAKE_RF_DEFAULT);
 }
 
 void loop(){
