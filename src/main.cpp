@@ -104,13 +104,17 @@ void setup(){
     client.setInsecure();
     sensor.begin();
     avgTemperature = getTemperature();
-    //WiFi.forceSleepWake();
+    WiFi.forceSleepWake();
+    delay(500);
     WiFi.persistent(false);
     //WiFi.printDiag(Serial);
     connectToWiFi(SSID,PASSWORD);
     sendData(avgTemperature);
     WiFi.disconnect(true);
-    ESP.deepSleepInstant(8e6, WAKE_RF_DEFAULT);
+    
+    system_deep_sleep_set_option(2);
+    system_deep_sleep_instant(8e6);
+    //ESP.deepSleepInstant(8e6, WAKE_RF_DEFAULT);
 }
 
 void loop(){
