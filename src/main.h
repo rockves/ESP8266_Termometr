@@ -12,7 +12,7 @@
 #define HTTPS_PORT 443
 
 #define AP_SSID "Esp-term"
-#define AP_PASSWORD "esp"
+#define AP_PASSWORD "esp123456"
 
 #define CONFIG_SERVER_PORT 80
 #define CONFIG_SERVER_HTML_FILE_LOCATION "/"

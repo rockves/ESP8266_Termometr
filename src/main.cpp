@@ -20,7 +20,7 @@ void connectToWiFi(const char* _ssid, const char* _password){
     #endif
     
     WiFi.mode(WiFiMode::WIFI_STA);
-    WiFi.begin(_ssid,_password);
+    WiFi.begin();
     while (WiFi.status() != WL_CONNECTED)
     {
         delay(500);
@@ -43,8 +43,11 @@ void setAP(){
     IPAddress subnet(255,255,255,0);
     
     WiFi.persistent(true);
-    WiFi.mode(WiFiMode::WIFI_AP);
+    WiFi.setAutoConnect(false);
+    WiFi.setAutoReconnect(false);
+    WiFi.mode(WiFiMode::WIFI_AP_STA);
     
+
     WiFi.softAPConfig(ip,gateway,subnet);
     WiFi.softAP(AP_SSID, AP_PASSWORD);
     Serial.println(WiFi.softAPIP());
@@ -59,22 +62,24 @@ void handleGetRequest(){
     String password = configServer.arg("PASSWORD");
     Serial.println(ssid);
     Serial.println(password);
-    WiFi.softAPdisconnect();
-    WiFi.mode(WiFiMode::WIFI_STA);
+    //WiFi.softAPdisconnect();
+    //WiFi.mode(WiFiMode::WIFI_STA);
     WiFi.begin(ssid, password);
-    for(int i = 0; i<100; i++){
+    configServer.sendContent("<p>Probuje polaczyc z " + String(ssid) + "...<p/>");
+    for(int i = 0; i<200; i++){
         if(WiFi.status() == WL_CONNECTED){
-            configServer.sendContent("<p>Polaczono do sieci </p>" + String(ssid));
+            //configServer.sendContent("<p>Polaczono</p>");
+            //WiFi.softAPdisconnect();
+            //WiFi.mode(WiFiMode::WIFI_STA);
+            Serial.println(WiFi.localIP());
+            system_restart();
             break;
         }
         delay(100);
     }
     if(WiFi.status() != WL_CONNECTED){
-        configServer.sendContent("<p>Nie udalo się polaczyc z siecia </p>" + String(ssid) + "<br><a href = '/'>Powrot</a>");
-        setAP();
-        configServer.on("/", HTTP_GET, handleConnection);
-        configServer.on("/post", HTTP_POST, handleGetRequest);
-        configServer.begin();
+        //configServer.sendContent("<p>Nie udalo się polaczyc</p><br><a href = '/'>Powrot</a>");
+        WiFi.disconnect();
     }
     
 }
