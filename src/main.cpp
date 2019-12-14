@@ -190,7 +190,7 @@ void setup(){
     pinMode(BUTTON_GPIO, INPUT_PULLUP);
     pinMode(LED_BUILTIN, OUTPUT);
 
-    if(false/*digitalRead(BUTTON_GPIO)*/){ //Tryb pracy
+    if(digitalRead(BUTTON_GPIO)){ //Tryb pracy
         digitalWrite(LED_BUILTIN, HIGH);
         client.setInsecure();
         sensor.begin();
