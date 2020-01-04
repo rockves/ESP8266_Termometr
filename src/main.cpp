@@ -211,27 +211,27 @@ void setup()
 #if DEBUG
     Serial.begin(115200);
     Serial.setDebugOutput(true);
-#endif
-
-    pinMode(BUTTON_GPIO, INPUT_PULLUP);
-#if DEBUG
     pinMode(LED_BUILTIN, OUTPUT);
 #endif
+
+    pinMode(BUTTON_AP_GPIO, INPUT_PULLUP);
+    pinMode(TEMP_SENSOR_POWER_CONTROLL_GPIO, OUTPUT);
 }
 
 void loop()
 {
-
-    if (digitalRead(BUTTON_GPIO))
+    if (digitalRead(BUTTON_AP_GPIO))
     { //Tryb pracy
 #if DEBUG
         digitalWrite(LED_BUILTIN, HIGH);
 #endif
         client.setInsecure();
+        digitalWrite(TEMP_SENSOR_POWER_CONTROLL_GPIO, LOW);
         sensor.begin();
         if (checkIsSensorConnected())
         {
             avgTemperature = getTemperature();
+            digitalWrite(TEMP_SENSOR_POWER_CONTROLL_GPIO, HIGH);
             WiFi.persistent(false);
             connectToWiFi();
             if (WiFi.status() == WL_CONNECTED)

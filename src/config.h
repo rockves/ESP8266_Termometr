@@ -49,14 +49,18 @@
 #define DISCONNECTED_SENSOR_ERROR_CODE '1' //Kod błędu oznaczający odłączony czujnik
 
 //Czujnik temperatury
-#define TEMP_SENSOR_GPIO 5                                      //Numer pinu do którego podłączony jest czujnik temperatury
+#define TEMP_SENSOR_GPIO 5   
+#define TEMP_SENSOR_POWER_CONTROLL_GPIO 14                      //Numer pinu do którego podłączony jest czujnik temperatury
 #define TIME_BETWEEN_CHECK_AND_READ_TEMPERATURE_MILISECONDS 800 //Czas pomiędzy sprawdzeniem a odczytem temperatury [ms]
 #define TIME_BETWEEN_MEASUREMENT_MILISECONDS 300                //Czas pomiędzy pomiarami [ms]
 #define MAX_MEASUREMENTS_ERROR 2                                //Maksymalna różnica w pomiarach
 
 //Przycisk
-#define BUTTON_GPIO 4 //Numer pinu do którego jest podłączony przycisk włączenia punktu dostępowego
+#define BUTTON_AP_GPIO 4 //Numer pinu do którego jest podłączony przycisk włączenia punktu dostępowego
 
 //Głęboki sen
 #define SECOND_IN_MICROSECOND 1000000                     //Sekunda w mikrosekundach
-#define DEEP_SLEEP_TIME_SECONDS 5 * SECOND_IN_MICROSECOND //Czas głębokiego snu ESP8266 [s]
+#define DEEP_SLEEP_TIME_SECONDS 2 * SECOND_IN_MICROSECOND //Czas głębokiego snu ESP8266 [s]
+
+//Odczyt stanu baterii
+#define ADC_PIN A0
