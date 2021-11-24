@@ -14,7 +14,7 @@
 
 //Ustawienia połączenia ze skryptem google
 #define HOST "script.google.com"    //Adres skryptów google
-#define SCRIPT_URL "https://script.google.com/macros/s/AKfycbz1tq8IRyaVZyfy-0BTZiumuc_s7IyiYQSKqXFcAe1IokDR__Me/exec" //Adres makra google
+#define SCRIPT_URL "adres" //Adres makra google
 #define HTTPS_PORT 443              //Port HTPPS
 
 //Ustawienia punktu dostępu
